@@ -1,5 +1,6 @@
 package codigo;
 import static codigo.Tokens.*;
+
 %%
 %class Lexer
 %type Tokens
@@ -10,6 +11,7 @@ espacio=[ ,\t,\r,\n]+
     public String lexeme;
 %}
 %%
+
 int |
 and |
 array |
@@ -59,40 +61,13 @@ with |
 write |
 else |
 xor |
-while {lexeme=yytext(); return Reservadas;}
-{espacio} {/*Ignore*/}
-"//".* {/*Ignore*/}
-"," |
-";" |
-"++" |
-"--" |
-">=" |
-">" |
-"<=" |
-"<" |
-"<>" |
-"=" |
-"+" |
-"-" |
-"*" |
-"/" |
-"(" |
-")" |
-"[" |
-"]" |
-":=" |
-"." |
-":" |
-"+=" |
-"-=" |
-"*=" |
-"/=" |
-">>" |
-"<<" |
-"<<=" |
-">>=" {lexeme=yytext(); return Reservadas;}
+while { lexeme = yytext(); return Reservadas; }
 
-{L}({L}|{D})* {lexeme=yytext(); return Identificador;}
-("(-"{D}+")")|{D}+ {lexeme=yytext(); return Numero;}
- . {return ERROR;}
+{espacio} {/* Ignore */}
+"//".* {/* Ignore */}
 
+"++" | "--" | ">=" | ">" | "<=" | "<" | "<>" | "=" | "+" | "-" | "*" | "/" | "(" | ")" | "[" | "]" | ":=" | "." | ":" | "+=" | "-=" | "*=" | "/=" | ">>" | "<<" | "<<=" | ">>=" { lexeme = yytext(); return Operador; }
+
+{L}({L}|{D})* { lexeme = yytext(); return Identificador; }
+("(-"{D}+")")|{D}+ { lexeme = yytext(); return Numero; }
+. { return ERROR; }
