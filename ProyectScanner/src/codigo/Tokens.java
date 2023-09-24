@@ -9,13 +9,9 @@ package codigo;
  * @author sebas2002cr
  */
 public enum Tokens {
-    Reservadas,
-    Igual,
-    Suma,
-    Resta,
-    Multiplicacion,
-    Division,
-    Identificador,
-    Numero,
+    PalabrasReservadas,
+    Identificadores,
+    Operadores,
+    Literales,
     ERROR
 }

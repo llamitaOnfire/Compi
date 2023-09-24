@@ -13,6 +13,9 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFileChooser;
+import javax.swing.TransferHandler;
+
 
 /**
  *
@@ -26,6 +29,15 @@ public class FrmPrincipal extends javax.swing.JFrame {
     public FrmPrincipal() {
         initComponents();
         this.setLocationRelativeTo(null);
+            // Habilitar la funcionalidad de copiar (Ctrl+C)
+        txtResultado.setTransferHandler(new TransferHandler("text"));
+
+         // Habilitar la funcionalidad de pegar (Ctrl+V)
+        txtResultado.setTransferHandler(new TransferHandler("text"));
+
+         // Habilitar la funcionalidad de cortar (Ctrl+X)
+        txtResultado.setTransferHandler(new TransferHandler("text"));
+
     }
 
     /**
@@ -41,6 +53,11 @@ public class FrmPrincipal extends javax.swing.JFrame {
         btnAnalizar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtResultado = new javax.swing.JTextArea();
+        jLabel1 = new javax.swing.JLabel();
+        btnCargarDocumento = new javax.swing.JButton();
+        txtNombreDocumento = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -54,6 +71,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
         btnAnalizar.setBackground(new java.awt.Color(51, 255, 51));
         btnAnalizar.setFont(new java.awt.Font("Helvetica Neue", 0, 18)); // NOI18N
         btnAnalizar.setText("Analizar");
+        btnAnalizar.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         btnAnalizar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAnalizarActionPerformed(evt);
@@ -64,19 +82,46 @@ public class FrmPrincipal extends javax.swing.JFrame {
         txtResultado.setRows(5);
         jScrollPane1.setViewportView(txtResultado);
 
+        jLabel1.setText("Cargar un documento de texto:");
+
+        btnCargarDocumento.setText("Cargar documento");
+        btnCargarDocumento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCargarDocumentoActionPerformed(evt);
+            }
+        });
+
+        txtNombreDocumento.setEditable(false);
+
+        jLabel2.setText("Documento leido:");
+
+        jLabel3.setText("Resultado del Scanner Lexico:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jScrollPane1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(txtEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnAnalizar, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(25, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(txtEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnAnalizar, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(btnCargarDocumento, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
+                                .addComponent(jLabel1)
+                                .addComponent(txtNombreDocumento))
+                            .addComponent(jLabel2))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -85,9 +130,22 @@ public class FrmPrincipal extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnAnalizar))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(46, 46, 46)
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnCargarDocumento)
+                        .addGap(79, 79, 79)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtNombreDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(13, 13, 13)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
 
         pack();
@@ -124,11 +182,11 @@ public class FrmPrincipal extends javax.swing.JFrame {
                     case ERROR:
                         resultado += "Simbolo no definido \n";
                         break;
-                    case Identificador: case Numero: case Reservadas:
-                        resultado += lexer.lexeme + ": Es un "+ tokens + "\n";
+                    case Identificadores: case Literales: case PalabrasReservadas: 
+                        resultado += lexer.lexeme + ": Pertenece a ' "+ tokens + " ' \n";
                         break;
                     default:
-                        resultado += "Token: " + tokens + "\n";
+                        resultado += lexer.lexeme + ": Pertenece a ' "+ tokens + " ' \n";
                         break;
                 }
                 
@@ -140,6 +198,52 @@ public class FrmPrincipal extends javax.swing.JFrame {
         }
         
     }//GEN-LAST:event_btnAnalizarActionPerformed
+
+    private void btnCargarDocumentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCargarDocumentoActionPerformed
+        // TODO add your handling code here:
+        JFileChooser fileChooser = new JFileChooser();
+    
+    int seleccion = fileChooser.showOpenDialog(this);
+    
+    if (seleccion == JFileChooser.APPROVE_OPTION) {
+        File archivoSeleccionado = fileChooser.getSelectedFile();
+        
+        String nombreArchivo = archivoSeleccionado.getName();
+        txtNombreDocumento.setText(nombreArchivo);
+        
+        try {
+            Reader lector = new BufferedReader(new FileReader(archivoSeleccionado));
+            Lexer lexer = new Lexer(lector);
+            String resultado = ""; // Resultado de toda la cadena que vamos a utilizar
+            while (true) {
+                Tokens tokens = lexer.yylex();
+                if (tokens == null) {
+                    resultado += "FIN";
+                    txtResultado.setText(resultado);
+                    return;
+                }
+                switch (tokens) {
+                    case ERROR:
+                        resultado += "Simbolo no definido \n";
+                        break;
+                    case Identificadores:
+                    case Literales:
+                    case PalabrasReservadas: 
+                        resultado += lexer.lexeme + ": Pertenece a ' " + tokens + " ' \n";
+                        break;
+                    default:
+                        resultado += lexer.lexeme + ": Pertenece a ' " + tokens + " ' \n";
+                        break;
+                }
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+    }//GEN-LAST:event_btnCargarDocumentoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -178,8 +282,13 @@ public class FrmPrincipal extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAnalizar;
+    private javax.swing.JButton btnCargarDocumento;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField txtEntrada;
+    private javax.swing.JTextField txtNombreDocumento;
     private javax.swing.JTextArea txtResultado;
     // End of variables declaration//GEN-END:variables
 }

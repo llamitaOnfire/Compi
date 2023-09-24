@@ -12,6 +12,9 @@ espacio=[ ,\t,\r,\n]+
 %}
 %%
 
+"/*"([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+"/" { /* Ignora los comentarios de bloque */ }
+
+
 int |
 and |
 array |
@@ -61,13 +64,16 @@ with |
 write |
 else |
 xor |
-while { lexeme = yytext(); return Reservadas; }
+while { lexeme = yytext(); return PalabrasReservadas; }
 
 {espacio} {/* Ignore */}
 "//".* {/* Ignore */}
 
-"++" | "--" | ">=" | ">" | "<=" | "<" | "<>" | "=" | "+" | "-" | "*" | "/" | "(" | ")" | "[" | "]" | ":=" | "." | ":" | "+=" | "-=" | "*=" | "/=" | ">>" | "<<" | "<<=" | ">>=" { lexeme = yytext(); return Operador; }
+"&" |"++" | "--" | ">=" | ">" | "<=" | "<" | "<>" | "=" | "+" | "-" | "*" | "/" | "(" | ")" | "[" | "]" | ":=" | "." | ":" | "+=" | "-=" | "*=" | "/=" | ">>" | "<<" | "<<=" | ">>=" { lexeme = yytext(); return Operadores; }
 
-{L}({L}|{D})* { lexeme = yytext(); return Identificador; }
-("(-"{D}+")")|{D}+ { lexeme = yytext(); return Numero; }
+{L}({L}|{D})* { lexeme = yytext(); return Identificadores; }
+{D}+"."{D}*([eE][-+]?{D}+)? | {D}+ { lexeme = yytext(); return Literales; }
+
+\"[^\"\n]*\" { lexeme = yytext(); return Literales; }
+"#"{D}+ { lexeme = yytext(); return Literales; }
 . { return ERROR; }

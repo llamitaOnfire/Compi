@@ -12,7 +12,7 @@ import java.io.File;
  */
 public class Principal {
     public static void main(String[] args) {
-        String ruta = "/Users/sebas2002cr/NetBeansProjects/ProyectScanner/src/codigo/Lexer.flex" ; // cambiar ruta de cada compurtadora 
+        String ruta = "/Users/sebas2002cr/NetBeansProjects/ProyectScanner/src/codigo/Lexer.flex" ; // cambiar ruta de cada computadora 
         generarLexer(ruta);
     }
     public static void generarLexer(String ruta){
