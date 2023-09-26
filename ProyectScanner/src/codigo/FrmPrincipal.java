@@ -11,10 +11,19 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.swing.JFileChooser;
 import javax.swing.TransferHandler;
+import javax.swing.table.DefaultTableModel;
 
 
 /**
@@ -29,14 +38,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
     public FrmPrincipal() {
         initComponents();
         this.setLocationRelativeTo(null);
-            // Habilitar la funcionalidad de copiar (Ctrl+C)
-        txtResultado.setTransferHandler(new TransferHandler("text"));
-
-         // Habilitar la funcionalidad de pegar (Ctrl+V)
-        txtResultado.setTransferHandler(new TransferHandler("text"));
-
-         // Habilitar la funcionalidad de cortar (Ctrl+X)
-        txtResultado.setTransferHandler(new TransferHandler("text"));
+        
 
     }
 
@@ -51,40 +53,41 @@ public class FrmPrincipal extends javax.swing.JFrame {
 
         txtEntrada = new javax.swing.JTextField();
         btnAnalizar = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        txtResultado = new javax.swing.JTextArea();
         jLabel1 = new javax.swing.JLabel();
         btnCargarDocumento = new javax.swing.JButton();
         txtNombreDocumento = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTableResultado = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        txtEntrada.setFont(new java.awt.Font("Helvetica Neue", 0, 24)); // NOI18N
+        txtEntrada.setFont(new java.awt.Font("Helvetica Neue", 0, 18)); // NOI18N
         txtEntrada.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtEntradaActionPerformed(evt);
             }
         });
 
-        btnAnalizar.setBackground(new java.awt.Color(51, 255, 51));
-        btnAnalizar.setFont(new java.awt.Font("Helvetica Neue", 0, 18)); // NOI18N
-        btnAnalizar.setText("Analizar");
-        btnAnalizar.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnAnalizar.setBackground(new java.awt.Color(0, 102, 102));
+        btnAnalizar.setForeground(new java.awt.Color(255, 255, 255));
+        btnAnalizar.setText("Analizar linea");
+        btnAnalizar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnAnalizar.setBounds(new java.awt.Rectangle(4, 4, 4, 4));
         btnAnalizar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAnalizarActionPerformed(evt);
             }
         });
 
-        txtResultado.setColumns(20);
-        txtResultado.setRows(5);
-        jScrollPane1.setViewportView(txtResultado);
-
         jLabel1.setText("Cargar un documento de texto:");
 
+        btnCargarDocumento.setBackground(new java.awt.Color(0, 102, 102));
+        btnCargarDocumento.setForeground(new java.awt.Color(255, 255, 255));
         btnCargarDocumento.setText("Cargar documento");
+        btnCargarDocumento.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnCargarDocumento.setBounds(new java.awt.Rectangle(4, 4, 4, 4));
         btnCargarDocumento.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCargarDocumentoActionPerformed(evt);
@@ -97,6 +100,19 @@ public class FrmPrincipal extends javax.swing.JFrame {
 
         jLabel3.setText("Resultado del Scanner Lexico:");
 
+        jTableResultado.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
+            },
+            new String [] {
+                "Token", "Tipo de Token", "Líneas"
+            }
+        ));
+        jScrollPane2.setViewportView(jTableResultado);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -105,47 +121,45 @@ public class FrmPrincipal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(txtEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btnAnalizar, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(btnCargarDocumento, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
-                                .addComponent(jLabel1)
-                                .addComponent(txtNombreDocumento))
-                            .addComponent(jLabel2))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel3)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 659, Short.MAX_VALUE)
+                    .addComponent(txtEntrada))
+                .addGap(12, 12, 12)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(btnCargarDocumento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel1)
+                        .addComponent(txtNombreDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel2)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(42, 42, 42)
+                        .addComponent(btnAnalizar, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(22, 22, 22)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAnalizar))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txtEntrada)
+                    .addComponent(btnAnalizar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(46, 46, 46)
+                        .addComponent(jLabel3)
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 416, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
-                        .addComponent(btnCargarDocumento)
-                        .addGap(79, 79, 79)
+                        .addComponent(btnCargarDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(71, 71, 71)
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtNombreDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(13, 13, 13)
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(16, Short.MAX_VALUE))
+                        .addComponent(txtNombreDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(153, 153, 153)))
+                .addGap(22, 22, 22))
         );
 
         pack();
@@ -156,95 +170,165 @@ public class FrmPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_txtEntradaActionPerformed
 
     private void btnAnalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnalizarActionPerformed
-        // TODO add your handling code here:
-        File archivo = new File("archivo.txt");
-        PrintWriter escribir;
-        try {
-            escribir = new PrintWriter(archivo);
-            escribir.print(txtEntrada.getText());
-            escribir.close();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        try {
-            Reader lector = new BufferedReader(new FileReader("archivo.txt"));
-            Lexer lexer = new Lexer(lector);
-            String resultado = ""; // Resultado de toda la cadena que vamos a utilizar
-            while (true) {
-                Tokens tokens = lexer.yylex();
-                if (tokens == null) {
-                    resultado += "FIN";
-                    txtResultado.setText(resultado);
-                    return;
-                }
-                switch (tokens) { // cambiar de estado para lo que tengamos definido en la clase lexer
-                    case ERROR:
-                        resultado += "Simbolo no definido \n";
-                        break;
-                    case Identificadores: case Literales: case PalabrasReservadas: 
-                        resultado += lexer.lexeme + ": Pertenece a ' "+ tokens + " ' \n";
-                        break;
-                    default:
-                        resultado += lexer.lexeme + ": Pertenece a ' "+ tokens + " ' \n";
-                        break;
-                }
-                
+ // Obtener el texto del campo de entrada
+    String textoEntrada = txtEntrada.getText();
+
+    // Crear un lector para procesar el texto de entrada
+    StringReader reader = new StringReader(textoEntrada);
+    Lexer lexer = new Lexer(reader);
+    List<TokenInfo> resultados = new ArrayList<>();
+
+     // Se crea un mapa para realizar un seguimiento de la cantidad de veces que un token aparece en cada línea.
+    Map<String, Map<String, Map<Integer, Integer>>> contadorTokens = new HashMap<>();
+
+    try {
+        while (true) {
+            Tokens tokens = lexer.yylex();
+            if (tokens == null) {
+                break; // Salir del bucle al final del texto
             }
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+
+            // Obtener el token y la línea actual
+            String token = lexer.lexeme;
+            String tipo = tokens.toString();
+            int lineaActual = lexer.lineaActual;
+
+            // Obtener o crear un mapa para el token actual
+            Map<String, Map<Integer, Integer>> tipoTokenMap = contadorTokens.computeIfAbsent(tipo, k -> new HashMap<>());
+
+            // Obtener o crear un mapa para el token actual dentro del tipo de token
+                Map<Integer, Integer> tokenLineas = tipoTokenMap.computeIfAbsent(token, k -> new HashMap<>());
+
+                // Se incrementa el contador para la línea actual en el mapa.
+                tokenLineas.put(lineaActual, tokenLineas.getOrDefault(lineaActual, 0) + 1);
         }
-        
+
+        // Mostrar los resultados en la tabla (asumiendo que tienes una tabla llamada jTableResultado)
+        DefaultTableModel model = (DefaultTableModel) jTableResultado.getModel();
+        model.setRowCount(0); // Limpiar la tabla
+
+        for (Map.Entry<String, Map<String, Map<Integer, Integer>>> tipoEntry : contadorTokens.entrySet()) {
+                String tipoToken = tipoEntry.getKey();
+                Map<String, Map<Integer, Integer>> tipoTokenMap = tipoEntry.getValue();
+
+                for (Map.Entry<String, Map<Integer, Integer>> entry : tipoTokenMap.entrySet()) {
+                    String token = entry.getKey();
+                    Map<Integer, Integer> lineas = entry.getValue();
+
+                    StringBuilder lineasStr = new StringBuilder();
+                    for (Map.Entry<Integer, Integer> lineaEntry : lineas.entrySet()) {
+                        int linea = lineaEntry.getKey();
+                        int contador = lineaEntry.getValue();
+                        if (lineasStr.length() > 0) {
+                            lineasStr.append(", ");
+                        }
+                        lineasStr.append(linea);
+                        if (contador > 1) {
+                            lineasStr.append(" (").append(contador).append(")");
+                        }
+                    }
+
+                    model.addRow(new Object[]{token, tipoToken, lineasStr.toString()});
+                }
+            }
+    } catch (IOException ex) {
+        // Manejo de excepciones en caso de error de lectura del texto
+        Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+    }       
     }//GEN-LAST:event_btnAnalizarActionPerformed
 
     private void btnCargarDocumentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCargarDocumentoActionPerformed
-        // TODO add your handling code here:
-        JFileChooser fileChooser = new JFileChooser();
-    
+ // Este método se ejecuta cuando se hace clic en el botón "Cargar Documento" en la interfaz de usuario.
+
+    // Se crea un cuadro de diálogo para que el usuario seleccione un archivo.
+    JFileChooser fileChooser = new JFileChooser();
     int seleccion = fileChooser.showOpenDialog(this);
-    
+
+    // Se verifica si el usuario ha seleccionado un archivo.
     if (seleccion == JFileChooser.APPROVE_OPTION) {
+        // Se obtiene el archivo seleccionado.
         File archivoSeleccionado = fileChooser.getSelectedFile();
-        
+        // Se obtiene el nombre del archivo y se muestra en un campo de texto en la interfaz de usuario.
         String nombreArchivo = archivoSeleccionado.getName();
         txtNombreDocumento.setText(nombreArchivo);
-        
+
         try {
+            // Se crea un lector para leer el archivo seleccionado.
             Reader lector = new BufferedReader(new FileReader(archivoSeleccionado));
+            // Se crea un analizador léxico (Lexer) para procesar el archivo.
             Lexer lexer = new Lexer(lector);
-            String resultado = ""; // Resultado de toda la cadena que vamos a utilizar
+            // Se crea una lista para almacenar los resultados del análisis léxico.
+            List<TokenInfo> resultados = new ArrayList<>();
+
+            // Se crea un mapa para realizar un seguimiento de la cantidad de veces que un token aparece en cada línea.
+            Map<String, Map<String, Map<Integer, Integer>>> contadorTokens = new HashMap<>();
+
+
+            // Se inicia un bucle infinito para analizar el archivo línea por línea.
             while (true) {
+                // Se obtiene el siguiente token del analizador léxico.
                 Tokens tokens = lexer.yylex();
+                // Se verifica si se ha llegado al final del archivo.
                 if (tokens == null) {
-                    resultado += "FIN";
-                    txtResultado.setText(resultado);
-                    return;
+                    break; // Salir del bucle al final del archivo.
                 }
-                switch (tokens) {
-                    case ERROR:
-                        resultado += "Simbolo no definido \n";
-                        break;
-                    case Identificadores:
-                    case Literales:
-                    case PalabrasReservadas: 
-                        resultado += lexer.lexeme + ": Pertenece a ' " + tokens + " ' \n";
-                        break;
-                    default:
-                        resultado += lexer.lexeme + ": Pertenece a ' " + tokens + " ' \n";
-                        break;
+
+                // Se obtiene el token y la línea actual.
+                String token = lexer.lexeme;
+                String tipo = tokens.toString();
+                int lineaActual = lexer.lineaActual;
+
+                // Se obtiene o crea un mapa para el token actual en el mapa contadorTokens.
+                Map<String, Map<Integer, Integer>> tipoTokenMap = contadorTokens.computeIfAbsent(tipo, k -> new HashMap<>());
+                
+                // Obtener o crear un mapa para el token actual dentro del tipo de token
+                Map<Integer, Integer> tokenLineas = tipoTokenMap.computeIfAbsent(token, k -> new HashMap<>());
+
+                // Se incrementa el contador para la línea actual en el mapa.
+                tokenLineas.put(lineaActual, tokenLineas.getOrDefault(lineaActual, 0) + 1);
+            }
+
+            // Se muestra los resultados en una tabla en la interfaz de usuario.
+            DefaultTableModel model = (DefaultTableModel) jTableResultado.getModel();
+            model.setRowCount(0); // Limpiar la tabla antes de agregar resultados.
+
+            for (Map.Entry<String, Map<String, Map<Integer, Integer>>> tipoEntry : contadorTokens.entrySet()) {
+                String tipoToken = tipoEntry.getKey();
+                Map<String, Map<Integer, Integer>> tipoTokenMap = tipoEntry.getValue();
+
+                for (Map.Entry<String, Map<Integer, Integer>> entry : tipoTokenMap.entrySet()) {
+                    String token = entry.getKey();
+                    Map<Integer, Integer> lineas = entry.getValue();
+
+                    StringBuilder lineasStr = new StringBuilder();
+                    for (Map.Entry<Integer, Integer> lineaEntry : lineas.entrySet()) {
+                        int linea = lineaEntry.getKey();
+                        int contador = lineaEntry.getValue();
+                        if (lineasStr.length() > 0) {
+                            lineasStr.append(", ");
+                        }
+                        lineasStr.append(linea);
+                        if (contador > 1) {
+                            lineasStr.append(" (").append(contador).append(")");
+                        }
+                    }
+
+                    model.addRow(new Object[]{token, tipoToken, lineasStr.toString()});
                 }
             }
         } catch (FileNotFoundException ex) {
+            // Manejo de excepciones en caso de que el archivo no se encuentre.
             Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
+            // Manejo de excepciones en caso de error de lectura del archivo.
             Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
     }
     }//GEN-LAST:event_btnCargarDocumentoActionPerformed
 
+
+
+    
     /**
      * @param args the command line arguments
      */
@@ -286,9 +370,9 @@ public class FrmPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable jTableResultado;
     private javax.swing.JTextField txtEntrada;
     private javax.swing.JTextField txtNombreDocumento;
-    private javax.swing.JTextArea txtResultado;
     // End of variables declaration//GEN-END:variables
 }

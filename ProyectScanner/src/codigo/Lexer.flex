@@ -6,13 +6,23 @@ import static codigo.Tokens.*;
 %type Tokens
 L=[a-zA-Z_]+
 D=[0-9]+
-espacio=[ ,\t,\r,\n]+
+espacio=[ ,\t,\r]+
 %{
     public String lexeme;
+    int lineaActual = 1; 
 %}
 %%
+"/*"([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+"/" { 
+    /* Ignora los comentarios de bloque y cuenta los saltos de línea dentro del comentario */
+    String comentario = yytext();
+    int lineasEnComentario = comentario.split("\n", -1).length - 1;
+    lineaActual += lineasEnComentario;
+}
 
-"/*"([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+"/" { /* Ignora los comentarios de bloque */ }
+\n { 
+    /* Cuenta los saltos de línea fuera de los comentarios */
+    lineaActual++;
+}
 
 
 int |
@@ -66,6 +76,7 @@ else |
 xor |
 while { lexeme = yytext(); return PalabrasReservadas; }
 
+
 {espacio} {/* Ignore */}
 "//".* {/* Ignore */}
 
@@ -76,4 +87,5 @@ while { lexeme = yytext(); return PalabrasReservadas; }
 
 \"[^\"\n]*\" { lexeme = yytext(); return Literales; }
 "#"{D}+ { lexeme = yytext(); return Literales; }
+
 . { return ERROR; }
