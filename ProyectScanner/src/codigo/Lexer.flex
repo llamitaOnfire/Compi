@@ -4,25 +4,36 @@ import static codigo.Tokens.*;
 %%
 %class Lexer
 %type Tokens
+
 L=[a-zA-Z_]+
 D=[0-9]+
-espacio=[ ,\t,\r]+
+espacio=[ \t\r]+
+
 %{
     public String lexeme;
     int lineaActual = 1; 
 %}
+
+
 %%
-"/*"([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+"/" { 
-    /* Ignora los comentarios de bloque y cuenta los saltos de línea dentro del comentario */
+
+
+\(\*[^*]*\*\) {
+    /* Ignorar comentarios de bloque ( (* ... *) ) */
     String comentario = yytext();
     int lineasEnComentario = comentario.split("\n", -1).length - 1;
     lineaActual += lineasEnComentario;
 }
 
+
+"//".* { /* Ignorar comentarios de línea (// ...) */ }
+
+
 \n { 
     /* Cuenta los saltos de línea fuera de los comentarios */
     lineaActual++;
 }
+
 
 
 int |
@@ -80,12 +91,18 @@ while { lexeme = yytext(); return PalabrasReservadas; }
 {espacio} {/* Ignore */}
 "//".* {/* Ignore */}
 
-"&" |"++" | "--" | ">=" | ">" | "<=" | "<" | "<>" | "=" | "+" | "-" | "*" | "/" | "(" | ")" | "[" | "]" | ":=" | "." | ":" | "+=" | "-=" | "*=" | "/=" | ">>" | "<<" | "<<=" | ">>=" { lexeme = yytext(); return Operadores; }
+"_" |"," |";" | "&" |"++" | "--" | ">=" | ">" | "<=" | "<" | "<>" | "=" | "+" | "-" | "*" | "/" | "(" | ")" | "[" | "]" | ":=" | "."  | ":" | "+=" | "-=" | "*=" | "/=" | ">>" | "<<" | "<<=" | ">>=" | "NOT"| "OR"| "AND"| "DIV"| "MOD" { lexeme = yytext(); return Operadores; }
 
-{L}({L}|{D})* { lexeme = yytext(); return Identificadores; }
 {D}+"."{D}*([eE][-+]?{D}+)? | {D}+ { lexeme = yytext(); return Literales; }
 
-\"[^\"\n]*\" { lexeme = yytext(); return Literales; }
 "#"{D}+ { lexeme = yytext(); return Literales; }
+\"[^\"\n]*\" { lexeme = yytext(); return Literales; }
 
-. { return ERROR; }
+[A-Za-z]([A-Za-z]|[0-9])* { lexeme = yytext().toLowerCase(); return Identificadores; }
+
+
+
+
+
+
+. {lexeme = yytext(); return ERROR; }
