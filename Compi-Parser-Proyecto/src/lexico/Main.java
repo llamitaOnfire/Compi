@@ -92,26 +92,26 @@ public class Main extends Application implements Cloneable  {
         Path pathActual = Paths.get("");
         String pathRaiz = pathActual.toAbsolutePath().toString();
 
-        generarLexer(pathRaiz);
-        generarSyntax(pathRaiz);
+        GenLexer(pathRaiz);
+        GenSyntax(pathRaiz);
 
         launch(args);
     }
 
-    public static void generarLexer(String pPathRaiz)
+    public static void GenLexer(String rootPath)
     {
-        String path = pPathRaiz + "/src/lexico/Lexer.flex";
+        String path = rootPath + "/src/lexico/Lexer.flex";
 
         File file = new File(path);
         jflex.Main.generate(file);
     }
 
-    private static void generarSyntax(String pPathRaiz)
+    private static void GenSyntax(String rootPath)
     {
-        String path = pPathRaiz + "/src/sintactico/Syntax.cup";
+        String path = rootPath + "/src/sintactico/Syntax.cup";
 
         String[] asintactico = {"-parser", "Syntax",
-                                "-destdir", pPathRaiz + "\\src\\sintactico\\",
+                                "-destdir", rootPath + "\\src\\sintactico\\",
                                 "-symbols", "sym",
                                 path};
 
@@ -119,9 +119,9 @@ public class Main extends Application implements Cloneable  {
         catch (Exception e) { e.printStackTrace(); }
     }
 
-    public void probarLexerFile()
+    public void proveLexerFile()
     {
-        reestablecerComponentes();
+        rebootComp();
 
         File fichero = new File ("fichero.txt");
         PrintWriter writer;
@@ -148,44 +148,44 @@ public class Main extends Application implements Cloneable  {
         }
         // reader = new BufferedReader(new StringReader(ta_insertar_texto_id.getText()));
 
-        ejecutarAnalizadorLexico(readerLexico, readerSintactico);
+        ejecuAnalizadorLex(readerLexico, readerSintactico);
     }
 
-    private void ejecutarAnalizadorLexico(Reader readerLexico, Reader readerSintactico)
+    private void ejecuAnalizadorLex(Reader readerLexico, Reader readerSintactico)
     {
-        Lexer lexerLexico = new Lexer(readerLexico);
-        Lexer lexerSintactico = new Lexer(readerSintactico);
+        Lexer lexerLex = new Lexer(readerLexico);
+        Lexer lexSin = new Lexer(readerSintactico);
 
         while (true)
         {
             Symbol token = null;
             try
             {
-                token = lexerLexico.next_token();
+                token = lexerLex.next_token();
             }
             catch (IOException e) { }
 
             if (token == null || token.value == null)
             {
-                agregarElementosTablaTokens();
-                agregarElementosTablaTokensErrores();
+                addEleTableToken();
+                addEleTableTokenErrors();
                 break; // return;
             }
 
             if ((token.sym != sym.error) && (token.sym != sym.ERROR_LITERAL) && (token.sym != sym.ERROR_IDENTIFICADOR
                     && (token.sym != sym.ERROR_OPERADOR) && (token.sym != sym.ERROR_PALABRA_RESERVADA)))
             {
-                agregarLineaToken(token.value.toString(), sym.terminalNames[token.sym], token.left);
+                addTokenLine(token.value.toString(), sym.terminalNames[token.sym], token.left);
             }
             else
             {
-                agregarLineaTokenErrores(token.value.toString(), sym.terminalNames[token.sym], token.left);
+                addTokenLineErrors(token.value.toString(), sym.terminalNames[token.sym], token.left);
             }
         }
-        ejecutarAnalizadorSintactico(lexerSintactico);
+        ejecuAnalizadorSin(lexSin);
     }
 
-    private void ejecutarAnalizadorSintactico(Lexer lexer)
+    private void ejecuAnalizadorSin(Lexer lexer)
     {
         Syntax syntax = new Syntax(lexer);
 
@@ -263,7 +263,7 @@ public class Main extends Application implements Cloneable  {
      * @param tipoToken tipo del token analizado
      * @param numeroLinea número de línea de aparición del token analizado
      */
-    private void agregarLineaToken(String token, String tipoToken, int numeroLinea){
+    private void addTokenLine(String token, String tipoToken, int numeroLinea){
         LineaToken linea = null;
         boolean existe = false;
         for(int i=0; i < tokenslist.size(); i++)
@@ -289,7 +289,7 @@ public class Main extends Application implements Cloneable  {
      * Encargado de agregar valores a la tabla de tokens de la interfaz
      * Utiliza el LinkedList tokenlist que posee todas las lineas de código resumidas por apariciones del token
      */
-    private void agregarElementosTablaTokens()
+    private void addEleTableToken()
     {
         String lineas;
         for(LineaToken l : tokenslist)
@@ -320,7 +320,7 @@ public class Main extends Application implements Cloneable  {
      * @param token token analizado
      * @param numeroLinea número de línea de aparición del token analizado
      */
-    private void agregarLineaTokenErrores(String token, String tipoError, int numeroLinea){
+    private void addTokenLineErrors(String token, String tipoError, int numeroLinea){
         LineaToken linea = null;
         boolean existe = false;
         for(int i=0; i< tokenslistErrores.size(); i++){
@@ -343,7 +343,7 @@ public class Main extends Application implements Cloneable  {
      * Encargado de agregar valores a la tabla de tokens de errores de la interfaz
      * Utiliza el LinkedList tokenlist que posee todas las lineas de código resumidas por apariciones del token
      */
-    private void agregarElementosTablaTokensErrores()
+    private void addEleTableTokenErrors()
     {
         String lineas;
         for(LineaToken l : tokenslistErrores){
@@ -366,7 +366,7 @@ public class Main extends Application implements Cloneable  {
     /**
      * Reestablece y limpia los valores asociados a los componentes graficos
      */
-    private void reestablecerComponentes()
+    private void rebootComp()
     {
         tokenslist = new LinkedList<LineaToken>();
         tokenslistErrores = new LinkedList<LineaToken>();
@@ -427,9 +427,9 @@ public class Main extends Application implements Cloneable  {
         return stringBuffer.toString();
     }
 
-    private void imprimir(String pMsg) { System.out.println(pMsg); }
+    private void print(String pMsg) { System.out.println(pMsg); }
 
-    private void imprimir(int pMsg) { System.out.println(pMsg); }
+    private void print(int pMsg) { System.out.println(pMsg); }
 
     private static String[] arrayToLower(String[] pArray)
     {
@@ -439,7 +439,7 @@ public class Main extends Application implements Cloneable  {
         return list.toArray(new String[list.size()]);
     }
 
-    public void agregarErrorSintactico(String pError)
+    public void addSinErrors(String pError)
     {
         ta_errores_sintacticos_id.appendText("\n" + pError);
     }

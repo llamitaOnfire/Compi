@@ -618,7 +618,7 @@ public class Syntax extends java_cup.runtime.lr_parser {
     {
         String msg = pMsg + ". En la línea: " + (linea) + ", columna: " + (columna) + ".";
 
-        Main.miInstancia.agregarErrorSintactico(msg);
+        Main.miInstancia.addSinErrors(msg);
     }
 
 
